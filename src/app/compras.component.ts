@@ -17,10 +17,8 @@ const estado = () => (window as any).tiendaEstado ?? { get: (c: string) => ({ ig
  template: `<section><small>ANGULAR · localhost:4501</small><h2>Compras</h2>
  <div class="columnas"><div>
    <p class="variables">IGV del shell: <b>{{ igv }} %</b> ·
-     Cupón (cambia la variable del shell):
-     <select (change)="cambiarDescuento($any($event.target).value)">
-       @for (d of [0, 10, 20]; track d) { <option [value]="d" [selected]="d === descuento()">{{ d ? d + ' %' : 'Sin cupón' }}</option> }
-     </select></p>
+     Descuento (cambia la variable del shell):
+     <input type="number" min="0" max="100" [value]="descuento()" (change)="cambiarDescuento($any($event.target))"> %</p>
    @if (error()) { <p>{{ error() }}</p> }
    @for (p of productos(); track p.id) {
      <div class="producto"><span>{{ p.nombre }}</span><b>S/ {{ p.precio.toFixed(2) }}</b><small>con IGV S/ {{ conIgv(p.precio) }}</small>
@@ -53,7 +51,10 @@ export class ComprasComponent implements OnInit, OnDestroy {
  }
  ngOnDestroy() { this.control.abort(); }
  conIgv(precio: number) { return (precio * (1 + this.igv / 100)).toFixed(2); }
- cambiarDescuento(valor: string) { estado().set('descuento', Number(valor)); }
+ cambiarDescuento(campo: HTMLInputElement) {
+   estado().set('descuento', Number(campo.value));
+   campo.value = String(this.descuento()); // Si el shell lo rechazó (p. ej. 150), vuelve al valor válido.
+ }
  // fetch en vez de HttpClient: así el componente no necesita providers del shell.
  async ngOnInit() {
    try {
