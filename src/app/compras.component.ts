@@ -4,8 +4,8 @@ const API = '/api'; // API local de demo (repo api-java).
 
 interface Producto { id: number; nombre: string; precio: number; }
 
-// Variables del shell (window.tiendaEstado). Si compras se abre sin shell, usa valores por defecto.
-const estado = () => (window as any).tiendaEstado ?? { get: (c: string) => ({ igv: 18, descuento: 0 } as any)[c], set: (c: string, v: number) => window.dispatchEvent(new CustomEvent('tienda:estado-cambio', { detail: { clave: c, valor: v } })) };
+// Variables del shell (window.tiendaEstado). Compras siempre corre dentro del shell.
+const estado = () => (window as any).tiendaEstado;
 
 // CONTRATO entre módulos (eventos en window):
 //   lanza → 'tienda:agregar'   detail: { id, nombre, precio }   (lo escucha el resumen del carrito)
